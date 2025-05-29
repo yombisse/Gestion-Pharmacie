@@ -1,0 +1,38 @@
+.card{
+    width: 400px;
+    height: 600px;
+    position:fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    align-content: center;
+    text-align: center;
+    border: solid;
+    border-radius: 3px;
+    border-color: blue;
+    border-width: 3px;
+    
+    background: rgb(255, 255, 255);
+}
+.background{
+    position: relative;
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+}
+.background::before{
+    content: "";
+    position: fixed;
+    top:0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/images/fond.jpg');
+    background-size: cover;
+
+    background-position: center;
+    opacity: 0.5;
+    z-index:0 ;
+
+
+}
