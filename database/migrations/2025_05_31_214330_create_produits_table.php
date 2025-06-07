@@ -20,6 +20,8 @@ return new class extends Migration
             $table->integer('quantite')->nullable();;
             $table->date('date_expiration')->nullable();
             $table->boolean('eta')->default(true);
+            $table->string('image')->nullable();
+
             $table->timestamps();
         });
     }

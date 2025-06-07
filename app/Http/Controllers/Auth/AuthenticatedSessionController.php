@@ -34,9 +34,13 @@ class AuthenticatedSessionController extends Controller
         // Redirige vers la route admin (à adapter selon ton nom de route)
         return redirect()->route('admin.dashboard');
     }
-
+    if ($user->hasRole('personnel')) {
+        // Redirige vers la route admin (à adapter selon ton nom de route)
+        return redirect()->route('personnels.dashboard');
+    }
+    
     // Sinon redirige vers le dashboard normal
-    return redirect()->intended(route('dashboard'));
+    return redirect()->intended(route('clients.dashboard'));
 }
 
     /**

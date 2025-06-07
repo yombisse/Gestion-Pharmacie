@@ -11,19 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('commandes_produits', function (Blueprint $table) {
+       Schema::create('commandes_produits', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('commande_id');
-            $table->unsignedBigInteger('produit_id');
+            $table->foreignId('commande_id')->constrained()->onDelete('cascade');
+            $table->foreignId('produit_id')->constrained()->onDelete('cascade');
             $table->dateTime('date_commande');
-            $table->decimal('prix_unitaire',10,2);
-            $table->decimal('sous_total',10,2);
-            $table->integer('quantite');
-            $table->enum('statut',['en_entente','en_livraison','livree'])->default('en_entente');
+            $table->decimal('prix_unitaire', 10, 2)->default(0);
+            $table->decimal('sous_total', 10, 2)->default(0);
+            $table->integer('quantite')->unsigned();
+            $table->enum('statut', ['en_entente', 'en_livraison', 'livree'])->default('en_entente');
             $table->timestamps();
-            $table->foreign('produit_id')->references('id')->on('produits')->onDelete('cascade');
-            $table->foreign('commande_id')->references('id')->on('commandes')->onDelete('cascade');
-        });
+
+            // Pour éviter les doublons
+            $table->unique(['commande_id', 'produit_id']);
+          });
     }
 
     /**

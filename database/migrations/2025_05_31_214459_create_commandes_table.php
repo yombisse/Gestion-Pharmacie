@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('client_id');
             $table->dateTime('date_commande');
-            $table->decimal('total_prix_commande',10,2);
-            $table->enum('statut',['en_entente','en_livraison','livree'])->default('en_entente');
-
+            $table->decimal('total_prix_commande',10,2)->default(0);
+            $table->string('statut', 255)->default('en_entente');
             $table->timestamps();
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
            

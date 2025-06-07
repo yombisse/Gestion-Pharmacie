@@ -23,6 +23,7 @@ class User extends Authenticatable
         'firstname',
         'email',
         'password',
+        'avatar',
     ];
 
     /**
@@ -55,4 +56,15 @@ class User extends Authenticatable
 
         return $this->hasOne(Client::class);
     }
+    public function commandes()
+{
+    return $this->hasMany(Commande::class);
+}
+public function getAvatarUrlAttribute()
+{
+    return $this->avatar
+        ? asset($this->avatar)
+        : asset('uploads/images/avatar.jpg');
+}
+
 }

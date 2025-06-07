@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('produit_id');
             $table->unsignedBigInteger('client_id');
+            $table->string('client_nom')->nullable();
             $table->integer('quantite_vente');
             $table->decimal('prix_total',10,2);
             $table->dateTime('date_vente');

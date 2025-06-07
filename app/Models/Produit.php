@@ -15,14 +15,25 @@ class Produit extends Model
         'quantite',
         'categorie',
         'date_expiration',
-        'etat',
-        'photo_produit',
+        'eta',
+        'image',
     ];
-    public function vente(){
+    public function ventes()
+{
+    return $this->belongsToMany(Commande::class, 'commandes_produits', 'produit_id', 'commande_id')
+                ->withPivot('quantite','prix_unitaire','sous_total') // adapte selon les colonnes que tu as
+                ->withTimestamps();
+}
 
-        return $this->hasMany(Vente::class);
-    }
     public function commande(){
         return $this->belongsToMany(Commande::class,'commandes_produits')->withPivot('quantite','prix_unitaire','sous_total')->withTimestamps();
     }
+
+    public static function getTopSellingProducts($limit = 5)
+{
+    return self::withCount('ventes')
+        ->orderBy('ventes_count', 'desc')
+        ->limit($limit)
+        ->get();
+}
 }
