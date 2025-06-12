@@ -10,11 +10,17 @@
         flex-direction: column;
         min-height: 100vh;
     }
+
+    /* Conteneur principal avec sidebar + contenu */
     .admin-container {
         display: flex;
         flex: 1;
         margin-top: 56px;
+        min-height: calc(100vh - 56px);
+        position: relative;
     }
+
+    /* Sidebar */
     .sidebar {
         width: 250px;
         background-color: #343a40;
@@ -24,8 +30,9 @@
         bottom: 0;
         left: 0;
         overflow-y: auto;
-        z-index: 0;
         transition: all 0.3s;
+        z-index: 1050;
+        padding-bottom: 60px; /* Pour éviter contenu coupé */
     }
     .sidebar-content {
         padding: 20px;
@@ -34,49 +41,110 @@
         color: white;
         text-decoration: none;
         display: block;
-        padding: 8px 0;
+        padding: 8px 12px;
+        border-radius: 4px;
     }
     .sidebar a.active,
     .sidebar a:hover {
         background-color: #495057;
     }
+
+    /* Contenu principal */
     .main-content {
         flex: 1;
         margin-left: 250px;
         padding: 20px;
         min-height: calc(100vh - 56px);
+        transition: margin-left 0.3s;
+        background-color: white;
     }
+
+    /* Dropdown menu style */
     .dropdown-menu-dark {
         background-color: #343a40;
         border-color: #495057;
     }
     .dropdown-menu-dark .dropdown-item {
-        color: rgba(255,255,255,.75);
+        color: rgba(255, 255, 255, 0.85);
     }
     .dropdown-menu-dark .dropdown-item:hover {
         background-color: #495057;
         color: #fff;
     }
+
+    /* Bouton toggle sidebar pour mobile */
+    .sidebar-toggle-btn {
+        display: none;
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 1100;
+        background-color: #343a40;
+        border: none;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    /* Responsive - petit écran */
     @media (max-width: 992px) {
         .sidebar {
-            margin-left: -250px;
+            position: fixed;
+            left: -260px;
+            width: 250px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.5);
         }
         .sidebar.active {
-            margin-left: 0;
+            left: 0;
         }
         .main-content {
             margin-left: 0;
         }
+        .sidebar-toggle-btn {
+            display: block;
+        }
+        /* Pour empêcher le scroll du contenu quand sidebar ouverte */
+        body.sidebar-open {
+            overflow: hidden;
+        }
+        /* Un overlay pour fermer la sidebar quand clic hors */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 56px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1040;
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
     }
 </style>
 
+<!-- Bouton toggle sidebar mobile -->
+<button class="sidebar-toggle-btn" aria-label="Toggle sidebar">
+    <i class="bi bi-list fs-4"></i>
+</button>
+
 <div class="admin-container">
+    <!-- Sidebar Overlay (mobile only) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
     <!-- Sidebar -->
-    <nav class="sidebar p-3 text-white">
+    <nav class="sidebar p-3 text-white" id="sidebar">
         <h4 class="text-center mb-3"><i class="bi bi-shield-lock"></i> Espace Admin</h4>
         <div class="text-center mb-3">
-            <img src="{{ asset( Auth::user()->avatar) }}" class="rounded-circle" width="60" height="60" alt="Avatar" >
-            <h5 class="mt-2">{{ Auth::user()->firstname }} {{ Auth::user()->name }}</h5>
+            @if(Auth::user()->avatar && file_exists(public_path(Auth::user()->avatar)))
+             <img src="{{ asset(Auth::user()->avatar) }}" class="rounded-circle" width="60" height="60" alt="Avatar">
+        @else
+             <img src="{{ asset('uploads/images/avatar.jpg') }}" class="rounded-circle" width="60" height="60" alt="Avatar par défaut">
+        @endif
+
+      <h5 class="mt-2">{{ Auth::user()->firstname }} {{ Auth::user()->name }}</h5>
             @if(Auth::user()->personnel)
                 <span class="badge bg-success">{{ Auth::user()->personnel->poste }}</span>
             @endif
@@ -100,7 +168,7 @@
 
             <li class="nav-item dropdown">
                 <a class="nav-link text-white dropdown-toggle" href="#" id="dropdownProduits" data-bs-toggle="dropdown">
-                    <i class="bi bi-capsule me-2"></i> Produits Pharmaceutiques
+                    <i class="bi bi-capsule me-2"></i> Produits/Medicament
                 </a>
                 <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownProduits">
                     <li><a class="dropdown-item" href="{{ route('produits.crud') }}"><i class="bi bi-plus-circle me-2"></i> Gérer</a></li>
@@ -133,20 +201,14 @@
                     <i class="bi bi-cart me-2"></i> Commandes
                 </a>
                 <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownCommandes">
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-check-circle me-2"></i> Valider une commande</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="bi bi-trash me-2"></i> Supprimer une commande</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-check-circle me-2"></i> Valider</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-trash me-2"></i> Supprimer</a></li>
                 </ul>
             </li>
 
             <li class="nav-item">
                 <a href="{{ route('produits.stocks.faibles') }}" class="nav-link text-white">
                     <i class="bi bi-clipboard-data me-2"></i> Stocks faibles
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a href="#" class="nav-link text-white">
-                    <i class="bi bi-graph-up-arrow me-2"></i> Voir les statistiques
                 </a>
             </li>
 
@@ -288,6 +350,32 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         options: {
             responsive: true
+        }
+    });
+
+    // Toggle sidebar mobile
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        document.body.classList.toggle('sidebar-open');
+    });
+
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.classList.remove('sidebar-open');
+    });
+
+    // Close sidebar on window resize if desktop
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 992) {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.classList.remove('sidebar-open');
         }
     });
 });

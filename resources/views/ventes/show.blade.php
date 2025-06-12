@@ -23,10 +23,8 @@
                             <p class="card-text mb-1"><strong>Prix total :</strong> {{ number_format($vente->prix_total, 0, ',', ' ') }} FCFA</p>
                             
                             @if($vente->client_nom)
-                                <p class="card-text mb-1"><strong>Client (nom saisi) :</strong> {{ $vente->client_nom }}</p>
-                            @elseif($vente->client)
-                                <p class="card-text mb-1"><strong>Client :</strong> {{ $vente->client->nom }}</p>
-                            @else
+                               <p><strong><i class="bi bi-person"></i> Client :</strong>{{ $vente->client->prenom }} {{ $vente->client->nom }}</p>
+                           @else
                                 <p class="card-text mb-1"><strong>Client :</strong> Non spécifié</p>
                             @endif
 

@@ -172,11 +172,11 @@ class PersonnelController extends Controller
 
 
     // Supprime un employé
-   public function destroy(Personnel $personnel)
+  public function destroy(Personnel $personnel)
 {
     $this->checkAdmin();
 
-    // Supprime la photo si elle existe (dans public/uploads/images)
+    // Supprime la photo si elle existe
     if ($personnel->photo) {
         $photoPath = public_path($personnel->photo);
         if (file_exists($photoPath)) {
@@ -184,16 +184,12 @@ class PersonnelController extends Controller
         }
     }
 
-    // Supprime l'utilisateur associé
-    if ($personnel->user) {
-        $personnel->user->delete();
-    }
-
-    // Supprime le personnel
+    // La suppression du user est automatiquement gérée par le modèle Personnel
     $personnel->delete();
 
     return redirect()->route('personnels.crud')->with('success', 'Employé supprimé.');
 }
+
 
   public function show(Personnel $personnel)
 

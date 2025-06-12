@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Personnel extends Model
 {
-    //
     protected $fillable = [
         'nom',
         'prenom',
@@ -22,9 +21,18 @@ class Personnel extends Model
         'photo',
         'etat',
     ];
-     public function user(){
 
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
+    protected static function booted()
+    {
+        static::deleting(function ($personnel) {
+            if ($personnel->user) {
+                $personnel->user->delete();
+            }
+        });
+    }
 }

@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Produit;
+
 class ClientController extends Controller
 {
     private function checkPersonnel()
@@ -156,5 +158,30 @@ class ClientController extends Controller
         $client->delete();
         return redirect()->route('clients.crud')->with('success', 'Client supprimé avec succès');
     }
+ 
+    public function produit_disponible()
+{
+    // Produits disponibles (quantité > 0)
+    $produits = Produit::where('quantite', '>', 0)->paginate(9);
+
+    // Catégories disponibles
+    $categories = Produit::where('quantite', '>', 0)->distinct()->pluck('categorie');
+
+    return view('clients.liste_produits', compact('produits', 'categories'));
+}
+
+    /*public function show_details(Produit $produit)
+    {
+        $this->checkPersonnel();
+        return view('produits.show', compact('produit'));
+    }*/
+    public function commandes_create($clientId, $produitId)
+{   
+    $client = Client::findOrFail($clientId);
+    $produit = Produit::findOrFail($produitId);
+     
+    return view('clients.commande_create', compact('client', 'produit'));
+}
+
 }
 

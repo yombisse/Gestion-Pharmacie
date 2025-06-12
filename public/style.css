@@ -1,0 +1,31 @@
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("{{ asset('images/fond.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.4; /* transparence du fond */
+            z-index: -1;
+        }
+
+        .bg-overlay {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(6px);
+        }
+
+    body {
+        overflow-y: auto; /* permet de défiler si besoin */
+    }
+    .card {
+        max-width: 900px;
+        margin: auto;
+    }
+    .card-body {
+        min-height: 80vh;
+    }
+
+

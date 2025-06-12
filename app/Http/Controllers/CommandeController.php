@@ -52,17 +52,13 @@ public function store(Request $request)
         ];
     }
 
-    // Vérifier le solde du client
-   // if ($totalCommande > $client->somme) {
-   //     return back()->withErrors(['Le total de la commande dépasse la somme disponible du client.'])->withInput();
-   // }
-
+   
     // Créer la commande
     $commande = Commande::create([
         'client_id' => $client->id,
-        'date_commande' => $request->date_commande,
+        'date_commande' => now(),
         'statut' => 'en_attente',
-        'prix_total_commande' => $totalCommande,
+        'total_prix_commande' => $totalCommande,
     ]);
         $sous_total = $quantiteDemandee * $produit->prix;
     // Attacher les produits et mettre à jour le stock
