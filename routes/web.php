@@ -6,7 +6,9 @@ use App\Http\Controllers\ProduitController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\VenteController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,11 +20,12 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('clients.dashboard');
 
 Route::get('/admin/dashboard', [VenteController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('admin.dashboard');
+Route::get('/personnel/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('personnels.dashboard');
 
-Route::get('/personnel/dashboard', function () {
+/*Route::get('/personnel/dashboard', function () {
     return view('employes.dashboard');
 })->middleware(['auth', 'verified'])->name('personnels.dashboard');
-
+*/
 
 /* ========== Employés ========== */
 Route::middleware(['auth'])->group(function () {
@@ -80,11 +83,11 @@ Route::middleware(['auth'])->group(function () {
 /* ========== Commandes ========== */
 Route::get('/commandes/create', [CommandeController::class, 'create'])->name('commandes.create');
 Route::post('/commandes', [CommandeController::class, 'store'])->name('commandes.store');
-Route::get('/commandes', [CommandeController::class, 'index'])->name('commandes.index');
+//Route::get('/commandes', [CommandeController::class, 'index'])->name('commandes.index');
 Route::get('/admin/clients/{user}/commandes', [CommandeController::class, 'commandesClient'])->name('admin.client.commandes');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/mes-commandes', [CommandeController::class, 'mesCommandes'])->name('commandes.mes_commandes');
+    Route::get('/mes-commandes', [CommandeController::class, 'index'])->name('commandes.mes_commandes');
 });
 
 
@@ -98,8 +101,8 @@ Route::middleware(['auth'])->group(function () {
 
 
 /* ========== Produits disponibles (filtrables) ========== */
-Route::get('disponible', [ClientController::class, 'produit_disponible'])->name('produit.liste');
-Route::get('/commandes/create/{clientId}/{produitId}', [ClientController::class, 'commandes_create'])->name('commandes.create');
+Route::get('disponible', [ClientController::class, 'produit_disponible'])->name('produits.liste');
+//Route::get('/commandes/create/{clientId}/{produitId}', [ClientController::class, 'commandes_create'])->name('commandes.create');
 
 
 require __DIR__.'/auth.php';

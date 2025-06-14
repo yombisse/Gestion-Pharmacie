@@ -3,42 +3,43 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Session;
 
 class PasswordResetLinkController extends Controller
 {
     /**
-     * Display the password reset link request view.
+     * Affiche le formulaire d'identification de l'utilisateur pour réinitialisation.
      */
-    public function create(): View
+    public function create()
     {
         return view('auth.forgot-password');
     }
 
     /**
-     * Handle an incoming password reset link request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * Vérifie les infos (email, nom, prénom) et affiche le formulaire de réinitialisation si correct.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $request->validate([
             'email' => ['required', 'email'],
+            'name' => ['required', 'string'],
+            'firstname' => ['required', 'string'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        // Rechercher l'utilisateur correspondant
+        $user = User::where('email', $request->email)
+                    ->where('name', $request->name)
+                    ->where('firstname', $request->firstname)
+                    ->first();
 
-        return $status == Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+        if ($user) {
+            // Stocker l'ID temporairement en session pour le formulaire de reset
+            Session::put('password_reset_user_id', $user->id);
+            return redirect()->route('password.reset');
+        }
+
+        return back()->withErrors(['error' => 'Les informations fournies ne correspondent à aucun compte.']);
     }
 }

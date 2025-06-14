@@ -85,7 +85,7 @@
                 <!-- Boutons -->
                 <div class="d-flex justify-content-between">
                     <button type="submit" class="btn btn-primary">Enregistrer la commande</button>
-                    <a href="{{ route('commandes.index') }}" class="btn btn-secondary">Annuler</a>
+                    <a href="{{ route('commandes.mes_commandes') }}" class="btn btn-secondary">Annuler</a>
                 </div>
             </form>
         </div>

@@ -81,7 +81,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('commandes.index') }}" class="nav-link">
+                <a href="{{ route('commandes.mes_commandes') }}" class="nav-link">
                     <i class="bi bi-bag-check me-2"></i> Mes commandes
                 </a>
             </li>
@@ -101,7 +101,7 @@
                 </a>
             </li>
             <li class="nav-item mt-3">
-                <a href="#" class="nav-link text-danger"
+                <a href="#" class="nav-link "
                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
                 </a>
@@ -118,9 +118,13 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
                     <h4 class="card-title mb-2">Bienvenue, {{ Auth::user()->firstname }}</h4>
-                    <img src="{{ Auth::user()->avatar ?? asset('images/default-avatar.png') }}"
-                         class="rounded-circle" width="60" height="60" alt="Avatar">
-                </div>
+                     
+                    @if(Auth::user()->avatar && file_exists(public_path(Auth::user()->avatar)))
+                        <img src="{{ asset(Auth::user()->avatar) }}" class="rounded-circle" width="60" height="60" alt="Avatar">
+                    @else
+                        <img src="{{ asset('uploads/images/avatar.jpg') }}" class="rounded-circle" width="60" height="60" alt="Avatar par défaut">
+                    @endif
+    </div>
 
                 <p class="card-text">Vous êtes désormais membre de notre pharmacie en ligne.</p>
 
@@ -139,7 +143,7 @@
                 </ul>
 
                 <div class="mt-4">
-                    <a href="{{ route('produit.liste') }}" class="btn btn-success me-2 mb-2">
+                    <a href="{{ route('produits.liste') }}" class="btn btn-success me-2 mb-2">
                         <i class="bi bi-cart-plus me-2"></i>Voir les produits disponibles
                     </a>
                 </div>

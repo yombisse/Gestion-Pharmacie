@@ -22,17 +22,13 @@
             <form action="{{ route('commandes.store') }}" method="POST">
                 @csrf
 
-                <!-- Client -->
+                <!-- Champ caché pour le client connecté -->
+                <input type="hidden" name="client_id" value="{{ auth()->user()->client->id }}">
+
+                <!-- Affichage en lecture seule du nom du client connecté -->
                 <div class="mb-3">
-                    <label for="client_id" class="form-label">Client</label>
-                    <select name="client_id" id="client_id" class="form-select" required>
-                        <option value="">-- Sélectionner un client --</option>
-                        @foreach($clients as $client)
-                            <option value="{{ $client->id }}" {{ old('client_id') == $client->id ? 'selected' : '' }}>
-                                {{ $client->nom }}   {{ $client->prenom }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <label class="form-label">Client</label>
+                    <input type="text" class="form-control" value="{{ auth()->user()->client->nom }} {{ auth()->user()->client->prenom }}" readonly>
                 </div>
 
                 <!-- Date de commande -->
@@ -73,7 +69,7 @@
                 <!-- Boutons -->
                 <div class="d-flex justify-content-between">
                     <button type="submit" class="btn btn-primary">Enregistrer la commande</button>
-                    <a href="{{ route('commandes.index') }}" class="btn btn-secondary">Annuler</a>
+                    <a href="{{ route('commandes.mes_commandes') }}" class="btn btn-secondary">Annuler</a>
                 </div>
             </form>
         </div>

@@ -87,6 +87,7 @@ public function show(Vente $vente)
 
     public function Dashboard()
     {
+        $this->checkPersonnel();
         // Récupération des données de base
         $counts = [
             'productCount' => Produit::count(),

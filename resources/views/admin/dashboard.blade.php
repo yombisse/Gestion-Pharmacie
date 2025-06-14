@@ -31,7 +31,7 @@
         left: 0;
         overflow-y: auto;
         transition: all 0.3s;
-        z-index: 1050;
+        z-index: 1;
         padding-bottom: 60px; /* Pour éviter contenu coupé */
     }
     .sidebar-content {
@@ -168,7 +168,7 @@
 
             <li class="nav-item dropdown">
                 <a class="nav-link text-white dropdown-toggle" href="#" id="dropdownProduits" data-bs-toggle="dropdown">
-                    <i class="bi bi-capsule me-2"></i> Produits/Medicament
+                    <i class="bi bi-capsule me-2"></i> Gestion Stock
                 </a>
                 <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownProduits">
                     <li><a class="dropdown-item" href="{{ route('produits.crud') }}"><i class="bi bi-plus-circle me-2"></i> Gérer</a></li>

@@ -12,13 +12,21 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 class CommandeController extends Controller
 {
+    private function checkPersonnel()
+    {
+        if (!Auth::check() || (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('personnel'))) {
+            abort(403, 'Accès réservé aux administrateurs ou aux personnels');
+        }
+    }
+
     // Méthode pour passer une commande via formulaire avec quantité
    public function create()
 {
-    $clients = Client::all();
     $produits = Produit::all();
+    $user =Auth::user();
+    $client = $user->client; // Essaye de récupérer le client lié
 
-    return view('commandes.ajouter_commande', compact('clients', 'produits'));
+    return view('commandes.ajouter_commande', compact('produits'));
 }
 
 
@@ -77,31 +85,25 @@ public function store(Request $request)
     /*$client->somme -= $totalCommande;
     $client->save();
  */
-    return redirect()->route('commandes.index')->with('success', 'Commande ajoutée avec succès.');
+    return redirect()->route('commandes.mes_commandes')->with('success', 'Commande ajoutée avec succès.');
 }
 
 public function index()
 {
-    $user = auth()->user();
-    
-    // Si l'utilisateur est un client
-    if ($user->hasRole('client')) {
-        $commandes = Commande::with(['produits'])
-                      ->where('client_id', $user->id)  // Filtre par client_id
-                      ->orderBy('date_commande', 'desc')
-                      ->get();
-    } 
-    // Si c'est un admin/personnel
-    else {
-        $commandes = Commande::with(['client', 'produits'])
-                      ->orderBy('date_commande', 'desc')
-                      ->get();
+    $user = Auth::user();
+
+    // Vérifie que l'utilisateur est bien un client avec une relation Client définie
+    if (!$user->client) {
+        abort(403, 'Aucun client associé à cet utilisateur.');
     }
 
-    return view('commandes.liste_commande', [
-        'commandes' => $commandes,
-        'isClient' => $user->hasRole('client')
-    ]);
+    // Récupère les commandes du client connecté
+    $commandes = Commande::with('produits')
+                  ->where('client_id', $user->client->id)
+                  ->orderBy('date_commande', 'desc')
+                  ->get();
+
+    return view('clients.commandes.index', compact('commandes'));
 }
 /*public function mesCommandes()
     {
@@ -114,10 +116,7 @@ public function index()
     public function commandesClient($userId)
 {
     // Vérifier si l'utilisateur est admin
-    if (!Auth::user()->hasRole('admin')) {
-        abort(403);
-    }
-    
+    $this->checkPersonnel();
     $commandes = Commande::where('user_id', $userId)
                 ->with(['user', 'produits'])
                 ->latest()

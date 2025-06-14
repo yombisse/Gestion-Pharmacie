@@ -70,9 +70,11 @@ class RegisteredUserController extends Controller
 
         // Connexion automatique de l'utilisateur
         Auth::login($user);
+        $user->load('client');
 
         // Attribution du rôle client
         $user->assignRole('client');
+
 
         // Redirection vers le tableau de bord client
         return redirect()->route('clients.dashboard');
