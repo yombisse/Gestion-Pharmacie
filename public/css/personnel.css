@@ -1,0 +1,116 @@
+
+    body {
+        background-color: #f8f9fa;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    .admin-container {
+        display: flex;
+        flex: 1;
+        margin-top: 56px; /* hauteur navbar */
+    }
+    /* Sidebar */
+    .sidebar {
+        width: 15%;
+        background-color: #343a40;
+        color: white;
+        position: fixed;
+        top: 56px;
+        bottom: 0;
+        left: 0;
+        overflow-y: auto;
+        transition: margin-left 0.3s ease;
+    }
+    .sidebar-content {
+        padding: 20px;
+    }
+    .sidebar a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 8px 0;
+        text-decoration:none;
+    }
+    .sidebar a.active,
+    .sidebar a:hover {
+        background-color: #495057;
+    }
+    /* Contenu principal */
+    .main-content {
+        flex: 1;
+        margin-left: 100px;
+        padding: 20px;
+        min-height: calc(100vh - 56px);
+        transition: margin-left 0.3s ease;
+    }
+    /* Dropdown menu dark style */
+    .dropdown-menu-dark {
+        background-color: #343a40;
+        border-color: #495057;
+    }
+    .dropdown-menu-dark .dropdown-item {
+        color: rgba(255,255,255,.75);
+    }
+    .dropdown-menu-dark .dropdown-item:hover {
+        background-color: #495057;
+        color: #fff;
+    }
+
+    /* Responsive sidebar */
+    @media (max-width: 992px) {
+        .sidebar {
+            margin-left: -250px;
+            position: fixed;
+          
+        }
+        .sidebar.active {
+            margin-left: 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+        }
+        .main-content {
+            margin-left: 0;
+        }
+    }
+
+    /* Bouton toggle sidebar */
+    .sidebar-toggle-btn {
+        position: fixed;
+        top: 70px;
+        left: 10px;
+        z-index: 1100;
+        border: none;
+        background-color: #343a40;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: none;
+    }
+    @media (max-width: 992px) {
+        .sidebar-toggle-btn {
+            display: block;
+        }
+    }
+    
+    /* Nouveaux styles pour la section accès rapide */
+    .quick-access-card {
+        transition: all 0.3s ease;
+        border-radius: 10px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .quick-access-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+    .quick-access-icon {
+        font-size: 1.75rem;
+        margin-bottom: 10px;
+    }
+    .quick-access-btn {
+        border-radius: 8px;
+        padding: 12px;
+        font-weight: 500;
+    }

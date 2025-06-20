@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin-navbar')
 @section('title', 'Liste des produits')
 @section('content')
 
@@ -19,7 +19,7 @@
             <form class="row g-2" method="GET" action="{{ route('produits.crud') }}">
                 <div class="col-md-9">
                     <div class="input-group">
-                        <span class="input-group-text bg-primary text-white">
+                        <span class="input-group-text bg-success text-white">
                             <i class="bi bi-search"></i>
                         </span>
                         <input class="form-control form-control-lg" type="search" name="recherche" 
@@ -28,7 +28,7 @@
                     </div>
                 </div>
                 <div class="col-md-3 d-grid">
-                    <button class="btn btn-primary btn-lg" type="submit">
+                    <button class="btn btn-success btn-lg" type="submit">
                         <i class="bi bi-funnel"></i> Filtrer
                     </button>
                 </div>

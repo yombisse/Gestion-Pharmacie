@@ -4,7 +4,7 @@
 @section('content')
 <div class="container mt-4">
     <div class="card shadow">
-        <div class="card-header bg-dark text-white">
+        <div class="card-header bg-success text-white">
             <h4>Nouvelle commande</h4>
         </div>
 

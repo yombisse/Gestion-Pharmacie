@@ -1,4 +1,4 @@
-@extends('layouts.app')
+<!--@extends('layouts.app')
 
 @section('title', 'Liste des produits disponibles')
 
@@ -6,7 +6,7 @@
 <div class="container mt-4">
     <h1 class="mb-4 text-center">Liste des Produits Disponibles</h1>
 
-    <!-- Formulaire de recherche -->
+     Formulaire de recherche 
     <form class="d-flex mb-4" method="GET" action="{{ route('produits.liste') }}">
         <input class="form-control me-2" type="search" name="recherche" value="{{ request('recherche') }}" placeholder="Rechercher un produit..." aria-label="Recherche">
         <button class="btn btn-outline-success" type="submit">Rechercher</button>
@@ -51,7 +51,7 @@
             @endforeach
         </div>
 
-        <!-- Pagination -->
+         Pagination 
         <div class="d-flex justify-content-center">
             {{ $produits->links() }}
         </div>
@@ -60,3 +60,4 @@
     @endif
 </div>
 @endsection
+-->

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Vente;
@@ -11,84 +12,137 @@ use App\Models\User;
 
 class VenteController extends Controller
 {
-     private function checkPersonnel()
+    private function checkPersonnel()
     {
-        if (!Auth::check() || !Auth::user()->hasRole('admin')) {
-            if(!Auth::check() || !Auth::user()->hasRole('personnel')){
-
-            
-            abort(403, 'Accès réservé aux administrateurs ou aux personnels');
+        if (!Auth::check() || (!Auth::user()->hasRole('admin') && !Auth::user()->hasRole('personnel'))) {
+            abort(403, 'Accès réservé aux administrateurs ou au personnel');
         }
     }
-    }
-      public function create()
-{
-    $this->checkPersonnel();
-    $produits = Produit::where('quantite', '>', 0)->get(); // seulement les produits en stock
-    $clients = Client::all();
-    return view('ventes.ajouter_vente',compact('produits','clients'));
-}
 
-public function index()
-{
-    $this->checkPersonnel();
-    // On récupère les ventes avec les infos du produit (relation)
-    $ventes = Vente::with('produit')->latest()->paginate(10); // pagination 10 par page
+    public function create()
+    {
+        $this->checkPersonnel();
 
-    return view('ventes.liste_vente', compact('ventes'));
-}
-public function store(Request $request)
-{
-    $this->checkPersonnel();
-    $request->validate([
-        'client_id' => 'required|exists:clients,id',
-        'produit_id' => 'required|exists:produits,id',
-        'quantite_vente' => 'required|integer|min:1',
-        'date_vente' => 'required|date',
-    ]);
+        $produits = Produit::where('quantite', '>', 0)->get();
+        $clients = Client::all();
+        $commandes = Commande::whereDoesntHave('vente')->with('client')->get(); // on récupère aussi les clients liés à chaque commande
 
-    $produit = Produit::findOrFail($request->produit_id);
-
-    if ($produit->quantite < $request->quantite_vente) {
-        return back()->withErrors(['quantite_vente' => 'Stock insuffisant pour ce produit.'])->withInput();
+        return view('ventes.ajouter_vente', compact('produits', 'clients', 'commandes'));
     }
 
-    $client = Client::findOrFail($request->client_id);
+    public function store(Request $request)
+    {
+        $this->checkPersonnel();
 
-    $prix_total = $request->quantite_vente * $produit->prix;
+        $request->validate([
+            'client_id' => 'required|exists:clients,id',
+            'produit_id' => 'required|exists:produits,id',
+            'quantite_vente' => 'required|integer|min:1',
+            'date_vente' => 'required|date',
+            'commande_id' => 'required|exists:commandes,id',
+        ]);
 
-    Vente::create([
-        'produit_id' => $produit->id,
-        'client_id' => $client->id,
-        'client_nom' => $client->nom,
-        'quantite_vente' => $request->quantite_vente,
-        'prix_total' => $prix_total,
-        'date_vente' => $request->date_vente,
-    ]);
+        $produit = Produit::findOrFail($request->produit_id);
+        if ($produit->quantite < $request->quantite_vente) {
+            return back()->withErrors(['quantite_vente' => 'Stock insuffisant pour ce produit.'])->withInput();
+        }
 
-    // Mettre à jour le stock
-    $produit->quantite -= $request->quantite_vente;
-    $produit->save();
+        $client = Client::findOrFail($request->client_id);
+        $commande = Commande::findOrFail($request->commande_id);
+        $prix_total = $request->quantite_vente * $produit->prix;
 
-    return redirect()->route('ventes.crud')->with('success', 'Vente enregistrée avec succès.');
-}
+        // Création de la vente
+        $vente = Vente::create([
+            'produit_id' => $produit->id,
+            'client_id' => $client->id,
+            'client_nom' => $client->nom,
+            'quantite_vente' => $request->quantite_vente,
+            'prix_total' => $prix_total,
+            'date_vente' => $request->date_vente,
+            'commande_id' => $commande->id,
+        ]);
 
+        // Mise à jour du stock
+        $produit->decrement('quantite', $request->quantite_vente);
 
+        // Mise à jour du statut de la commande
+        $commande->statut = 'Validée';
+        $commande->save();
 
-public function show(Vente $vente)
+        return redirect()->route('ventes.crud')->with('success', 'Vente enregistrée et commande validée.');
+    }
 
-{
-    $this->checkPersonnel();
-    // Charge les relations si besoin
-    $vente->load('produit', 'client');
+    public function index()
+    {
+        $this->checkPersonnel();
 
-    return view('ventes.show', compact('vente'));
-}
+        $ventes = Vente::with('produit', 'commande')->latest()->paginate(10);
+        return view('ventes.liste_vente', compact('ventes'));
+    }
+
+    public function show(Vente $vente)
+    {
+        $this->checkPersonnel();
+        $vente->load('produit', 'client', 'commande');
+        return view('ventes.show', compact('vente'));
+    }
+
+    public function edit($id)
+    {
+        $this->checkPersonnel();
+        $vente = Vente::findOrFail($id);
+        $produits = Produit::all();
+        return view('ventes.modifier_vente', compact('vente', 'produits'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $this->checkPersonnel();
+
+        $request->validate([
+            'produit_id' => 'required|exists:produits,id',
+            'quantite_vente' => 'required|integer|min:1',
+            'client_nom' => 'required|string|max:255',
+            'date_vente' => 'required|date',
+        ]);
+
+        $vente = Vente::findOrFail($id);
+        $produit = Produit::findOrFail($request->produit_id);
+
+        $vente->update([
+            'produit_id' => $produit->id,
+            'quantite_vente' => $request->quantite_vente,
+            'prix_total' => $produit->prix * $request->quantite_vente,
+            'client_nom' => $request->client_nom,
+            'date_vente' => $request->date_vente,
+        ]);
+
+        return redirect()->route('ventes.crud')->with('success', 'Vente mise à jour avec succès.');
+    }
+
+    public function afficherFacture($id)
+    {
+        $vente = Vente::with('produit', 'client', 'commande')->findOrFail($id);
+        $user = Auth::user();
+
+        if ($user->hasRole('admin') || $user->hasRole('personnel')) {
+            return view('ventes.facture', compact('vente'));
+        }
+
+        if ($user->hasRole('client')) {
+            if ($vente->client->user_id !== $user->id) {
+                abort(403, 'Accès refusé : cette facture ne vous appartient pas.');
+            }
+            return view('ventes.facture', compact('vente'));
+        }
+
+        abort(403, 'Accès refusé.');
+    }
 
     public function Dashboard()
     {
         $this->checkPersonnel();
-        // Récupération des données de base
+
         $counts = [
             'productCount' => Produit::count(),
             'orderCount' => Commande::count(),
@@ -96,26 +150,24 @@ public function show(Vente $vente)
             'userCount' => User::count(),
         ];
 
-        // Données pour le graphique des ventes mensuelles
         $monthlySalesData = Vente::getMonthlySales();
-        
+
         $months = [
             1 => 'Janvier', 2 => 'Février', 3 => 'Mars', 4 => 'Avril',
             5 => 'Mai', 6 => 'Juin', 7 => 'Juillet', 8 => 'Août',
             9 => 'Septembre', 10 => 'Octobre', 11 => 'Novembre', 12 => 'Décembre'
         ];
-        
+
         $salesLabels = [];
         $salesValues = [];
-        
+
         foreach ($months as $key => $month) {
             $salesLabels[] = $month;
             $salesValues[] = $monthlySalesData[$key] ?? 0;
         }
 
-        // Données pour le top des produits
         $topProducts = Produit::getTopSellingProducts(5);
-        
+
         return view('admin.dashboard', array_merge($counts, [
             'salesLabels' => $salesLabels,
             'salesValues' => $salesValues,
@@ -124,37 +176,4 @@ public function show(Vente $vente)
             'topProductsData' => $topProducts->pluck('ventes_count')
         ]));
     }
-    public function edit($id)
-{
-    $vente = Vente::findOrFail($id);
-    $produits = Produit::all(); // Pour permettre de choisir un autre produit si besoin
-    return view('ventes.modifier_vente', compact('vente', 'produits'));
-}
-public function update(Request $request, $id)
-{
-    $request->validate([
-        'produit_id' => 'required|exists:produits,id',
-        'quantite_vente' => 'required|numeric|min:1',
-        'client_nom' => 'required|string|max:255',
-        'date_vente' => 'required|date',
-    ]);
-
-    $vente = Vente::findOrFail($id);
-    $produit = Produit::findOrFail($request->produit_id);
-
-    $vente->produit_id = $produit->id;
-    $vente->quantite_vente = $request->quantite_vente;
-    $vente->prix_total = $produit->prix * $request->quantite_vente;
-    $vente->client_nom = $request->client_nom;
-    $vente->date_vente = $request->date_vente;
-    $vente->save();
-
-    return redirect()->route('ventes.crud')->with('success', 'Vente mise à jour avec succès.');
-}
-public function afficherFacture($id)
-{
-    $vente = Vente::with('produit')->findOrFail($id);
-    return view('ventes.facture', compact('vente'));
-}
-
 }

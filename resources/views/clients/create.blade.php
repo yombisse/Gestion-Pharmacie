@@ -1,4 +1,4 @@
-@extends('layouts.app')
+<!--@extends('layouts.app')
 
 @section('title', isset($client) ? 'Modifier Client' : 'Ajouter Client')
 
@@ -55,3 +55,4 @@
     </form>
 </div>
 @endsection
+-->

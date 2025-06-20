@@ -37,6 +37,9 @@
                         <a href="{{ route('profile.edit') }}" class="btn btn-success">
                             <i class="fas fa-edit mr-2"></i>Modifier le profil
                         </a>
+                        <a href="{{ route('clients.dashboard') }}" class="btn btn-secondary ms-2">
+                            <i class="fas fa-arrow-left mr-2"></i>Annuler
+                        </a>
                     </div>
                 </div>
             </div>

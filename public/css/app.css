@@ -1,0 +1,20 @@
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .main-content {
+            flex: 1;
+        }
+        .navbar-brand {
+            font-weight: 600;
+        }
+        footer {
+            background-color: green;
+            z-index: 1000;
+        }
+        .nav-link.active {
+            font-weight: 500;
+            text-decoration: underline;
+        }

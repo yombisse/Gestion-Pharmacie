@@ -109,8 +109,8 @@
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('profile.show') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Annuler
+                            <a href="{{ route('clients.dashboard') }}" class="btn btn-secondary">
+                                <i class="fas fa-home me-2"></i>Retour à l'accueil
                             </a>
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-2"></i>Enregistrer les modifications

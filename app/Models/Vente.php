@@ -8,7 +8,8 @@ class Vente extends Model
 {
     protected $fillable = [
         'produit_id',
-        'client_id',     // pour la relation avec la table clients
+        'client_id',  
+        'commande_id', 
         'client_nom',    // si tu veux aussi enregistrer le nom en clair
         'quantite_vente',
         'prix_total',
@@ -39,6 +40,12 @@ class Vente extends Model
         ->get()
         ->pluck('total', 'month');
 }
+
+    public function commande()
+    {
+        return $this->belongsTo(Commande::class);
+    }
+
    
 }
 

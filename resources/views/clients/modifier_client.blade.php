@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin-navbar')
 @section('title', 'Modifier un client')
 
 @section('content')

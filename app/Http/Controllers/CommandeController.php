@@ -77,7 +77,7 @@ public function store(Request $request)
             'sous_total' => $sous_total, 
         ]);
 
-        $item['produit']->quantite -= $item['quantite'];
+        //$item['produit']->quantite -= $item['quantite'];
         $item['produit']->save();
     }
 
