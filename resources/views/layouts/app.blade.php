@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>@yield('title', 'Pharmacie Dofiin Saamù - Client')</title>
+    <title>@yield('title', 'Pharmacie Dofiin Saamù')</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -12,26 +12,27 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 
     <style>
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        .navbar .nav-link {
+            transition: background-color 0.3s ease;
         }
-        main {
-            flex-grow: 1;
-            padding: 1rem;
+
+        .navbar .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
         }
     </style>
+
     @stack('styles')
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-top shadow-sm">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" width="40" class="me-2" />
+        <a class="navbar-brand d-flex align-items-center fw-bold" href="{{ url('/') }}">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" width="40" class="me-2 rounded-circle border border-white" />
             Pharmacie Dofiin Saamù
         </a>
+
         <button
             class="navbar-toggler"
             type="button"
@@ -46,81 +47,79 @@
 
         <div class="collapse navbar-collapse" id="clientNavbar">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a
-                        class="nav-link {{ request()->is('client/dashboard') ? 'active' : '' }}"
-                        href="{{ route('clients.dashboard') }}"
-                    >
-                        <i class="bi bi-speedometer2 me-1"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a
-                        class="nav-link {{ request()->is('client/commandes*') ? 'active' : '' }}"
-                        href="{{ route('commandes.mes_commandes') }}"
-                    >
-                        <i class="bi bi-bag-check me-1"></i> Mes commandes
-                    </a>
-                </li>
-                
-                <li class="nav-item">
-                    <a
-                        class="nav-link {{ request()->is('client/profile') ? 'active' : '' }}"
-                        href="{{ route('profile.show') }}"
-                    >
-                        <i class="bi bi-file-earmark-medical me-1"></i> Mon profil
-                    </a>
-                </li>
+                @auth
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('client/dashboard') ? 'active fw-bold' : '' }}"
+                           href="{{ route('clients.dashboard') }}">
+                            <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('client/commandes*') ? 'active fw-bold' : '' }}"
+                           href="{{ route('commandes.mes_commandes') }}">
+                            <i class="bi bi-bag-check me-1"></i> Mes commandes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('client/profile') ? 'active fw-bold' : '' }}"
+                           href="{{ route('profile.show') }}">
+                            <i class="bi bi-file-earmark-medical me-1"></i> Mon profil
+                        </a>
+                    </li>
+                @endauth
             </ul>
 
             <ul class="navbar-nav ms-auto">
                 @auth
-                <li class="nav-item dropdown">
-                    <a
-                        class="nav-link dropdown-toggle d-flex align-items-center"
-                        href="#"
-                        role="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                    >
-                        <i class="bi bi-person-circle me-1"></i>
-                        {{ Auth::user()->firstname }} {{ Auth::user()->name }}
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                            <a class="dropdown-item" href="{{ route('profile.show') }}">
-                                <i class="bi bi-person me-2"></i> Mon compte
-                            </a>
-                        </li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="dropdown-item">
-                                    <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center"
+                           href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-1 fs-5"></i>
+                            {{ Auth::user()->firstname }} {{ Auth::user()->name }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('profile.show') }}">
+                                    <i class="bi bi-person me-2"></i> Mon compte
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
                 @else
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('login') }}">
-                        <i class="bi bi-box-arrow-in-right me-1"></i> Connexion
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Connexion
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('register') }}">
+                            <i class="bi bi-pencil-square me-1"></i> Inscription
+                        </a>
+                    </li>
                 @endauth
             </ul>
         </div>
     </div>
 </nav>
 
-<main>
+<main class="py-4">
     <div class="container">
         @yield('content')
     </div>
 </main>
 
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+@stack('scripts')
 <!-- Footer -->
 <footer class="py-4 bg-success text-white">
     <div class="container">
@@ -150,9 +149,5 @@
         </div>
     </div>
 </footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-@stack('scripts')
-
 </body>
 </html>
