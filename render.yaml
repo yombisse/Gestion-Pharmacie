@@ -4,18 +4,32 @@ services:
     env: php
     plan: free
     buildCommand: |
-      composer install
+      composer install --no-dev --optimize-autoloader
       php artisan migrate --force
     startCommand: php artisan serve --host 0.0.0.0 --port $PORT
     envVars:
+      - key: APP_NAME
+        value: Laravel
       - key: APP_ENV
         value: production
-      - key: APP_DEBUG
-        value: false
       - key: APP_KEY
-        generateValue: true
+        value: base64:mJuQti3CyCvAWBg1KDPwUN32jU8ghURWd1T561jmVg8=
+      - key: APP_DEBUG
+        value: "false"
       - key: APP_URL
         value: https://gestionnaire-pharmacie.onrender.com
+
+      - key: APP_LOCALE
+        value: fr
+      - key: APP_FALLBACK_LOCALE
+        value: fr
+      - key: APP_FAKER_LOCALE
+        value: fr_FR
+
+      - key: LOG_CHANNEL
+        value: stack
+      - key: LOG_LEVEL
+        value: debug
 
       - key: DB_CONNECTION
         value: mysql
