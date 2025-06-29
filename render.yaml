@@ -5,17 +5,16 @@ services:
     plan: free
     buildCommand: |
       composer install --no-dev --optimize-autoloader
+      php artisan config:cache
       php artisan migrate --force
     startCommand: php artisan serve --host 0.0.0.0 --port $PORT
     envVars:
-      - key: APP_NAME
-        value: Laravel
       - key: APP_ENV
         value: production
       - key: APP_KEY
         value: base64:mJuQti3CyCvAWBg1KDPwUN32jU8ghURWd1T561jmVg8=
       - key: APP_DEBUG
-        value: "false"
+        value: false
       - key: APP_URL
         value: https://gestionnaire-pharmacie.onrender.com
 
@@ -31,15 +30,16 @@ services:
       - key: LOG_LEVEL
         value: debug
 
+      # Configuration MySQL via db4free
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
-        value: interchange.proxy.rlwy.net
+        value: db4free.net
       - key: DB_PORT
-        value: 44109
+        value: 3306
       - key: DB_DATABASE
-        value: railway
+        value: gestionpharmacie
       - key: DB_USERNAME
-        value: root
+        value: fandie_yombisse
       - key: DB_PASSWORD
-        value: lvYxflUFvsKTMRZCRbhwcmmgeCQgVuAx
+        value: mySqld@tabase
