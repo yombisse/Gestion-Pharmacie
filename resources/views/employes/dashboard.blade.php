@@ -175,116 +175,12 @@
     </div>
 </main>
 
-<style>
-    html, body {
-        overflow-x: hidden; /* Empêche le scroll horizontal global */
-    }
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/personnel.css') }}">
+@endsection
 
-    .container-fluid {
-        max-width: 1140px; /* Largeur max standard Bootstrap container */
-        margin: 0 auto;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        box-sizing: border-box;
-    }
+@section('scripts')
+    {{-- Si tu veux ajouter des scripts JS plus tard --}}
+@endsection
 
-    /* Réduction progressive des tailles de texte */
-    body {
-        font-size: 1rem;
-    }
-
-    @media (max-width: 992px) {
-        body {
-            font-size: 0.9rem;
-        }
-        h3, h5 {
-            font-size: 1.2rem;
-        }
-        .table th, .table td {
-            font-size: 0.85rem;
-        }
-    }
-
-    @media (max-width: 768px) {
-        body {
-            font-size: 0.85rem;
-        }
-        h3, h5 {
-            font-size: 1rem;
-        }
-        .table th, .table td {
-            font-size: 0.75rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        body {
-            font-size: 0.8rem;
-        }
-        h3, h5 {
-            font-size: 0.9rem;
-        }
-        .table th, .table td {
-            font-size: 0.7rem;
-            padding: 0.3rem;
-            white-space: nowrap;
-        }
-        .btn {
-            padding: 0.4rem 0.6rem;
-            font-size: 0.8rem;
-        }
-        .card-body i {
-            font-size: 1.5rem;
-        }
-    }
-
-    /* Boutons accès rapide responsive */
-    .quick-btn {
-        min-height: auto; /* pas de hauteur fixe */
-        padding: 0.5rem 0.75rem;
-        font-size: 0.85rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 0.4rem;
-        transition: all 0.3s ease;
-    }
-
-    .quick-btn i {
-        font-size: 1.5rem;
-    }
-
-    @media (max-width: 576px) {
-        .quick-btn {
-            padding: 0.4rem 0.5rem;
-            font-size: 0.75rem;
-        }
-        .quick-btn i {
-            font-size: 1.2rem;
-        }
-    }
-
-    /* Scroll horizontal uniquement sur les tableaux si nécessaire */
-    .table-responsive {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .table {
-        width: 100%;
-        max-width: 100%;
-        white-space: nowrap;
-    }
-
-    /* Conteneur principal responsive */
-    .main-content {
-        border: 5px solid #000;
-        max-width: 1200px;
-        margin: 1rem auto;
-        padding: 1rem;
-        box-sizing: border-box;
-        background-color: #fff;
-    }
-</style>
 @endsection

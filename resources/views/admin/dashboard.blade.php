@@ -2,9 +2,11 @@
 
 @section('title', 'Tableau de bord - Admin')
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+@endsection
+
 @section('content')
-
-
     <!-- Main Content -->
     <main class="main-content">
         <h3 class="mb-4">Bienvenue, {{ Auth::user()->name }}</h3>
@@ -84,76 +86,20 @@
             </div>
         </div>
     </main>
-</div>
+@endsection
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Ventes mensuelles
-    const salesCtx = document.getElementById('monthlySalesChart').getContext('2d');
-    new Chart(salesCtx, {
-        type: 'line',
-        data: {
-            labels: @json($salesLabels),
-            datasets: [{
-                label: 'Ventes (€)',
-                data: @json($salesValues),
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 2,
-                tension: 0.3
-            }]
-        },
-        options: {
-            responsive: true
-        }
-    });
+@section('scripts')
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    // Produits les plus vendus
-    const topCtx = document.getElementById('topProductsChart').getContext('2d');
-    new Chart(topCtx, {
-        type: 'bar',
-        data: {
-            labels: @json($topProductsLabels),
-            datasets: [{
-                label: 'Quantité vendue',
-                data: @json($topProductsData),
-                backgroundColor: 'rgba(40, 167, 69, 0.6)',
-                borderColor: 'rgba(40, 167, 69, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true
-        }
-    });
+    <!-- Variables PHP passées à JS -->
+    <script>
+        const salesLabels = @json($salesLabels);
+        const salesValues = @json($salesValues);
+        const topProductsLabels = @json($topProductsLabels);
+        const topProductsData = @json($topProductsData);
+    </script>
 
-    // Toggle sidebar mobile
-    const sidebar = document.getElementById('sidebar');
-    const toggleBtn = document.querySelector('.sidebar-toggle-btn');
-    const overlay = document.getElementById('sidebarOverlay');
-
-    toggleBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
-        document.body.classList.toggle('sidebar-open');
-    });
-
-    overlay.addEventListener('click', () => {
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
-        document.body.classList.remove('sidebar-open');
-    });
-
-    // Close sidebar on window resize if desktop
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 992) {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.classList.remove('sidebar-open');
-        }
-    });
-});
-</script>
+    <!-- Script personnalisé -->
+    <script src="{{ asset('js/dashboard.js') }}"></script>
 @endsection
